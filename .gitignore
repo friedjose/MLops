@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+code_mlops-venv/
+
+# Environment files
+.env
+*.env
+*.local
+
+# Logs
+*.log
+
+# Model artifacts
+*.pkl
+*.joblib
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode settings (if you use VSCode)
+.vscode/
+
+# macOS / Windows system files
+.DS_Store
+Thumbs.db
