@@ -19,10 +19,12 @@ pipeline {
             steps {
                 echo "🐍 Creando entorno virtual e instalando dependencias..."
                 sh '''
+                    apt-get update
+                    apt-get install -y python3 python3-venv python3-pip
                     python3 -m venv venv
                     . venv/bin/activate
                     pip install --upgrade pip
-                    pip install -r Mlops/src/requirements.txt
+                    pip install -r Mlops/requirements.txt
                 '''
             }
         }
