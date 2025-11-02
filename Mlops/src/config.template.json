@@ -1,0 +1,8 @@
+{
+    "project_code": "YOUR_PROJECT_CODE",
+    "project_name": "YOUR_PROJECT_NAME",
+    "user_name": "YOUR_USERNAME",
+    "bucket": "",
+    "database": "YOUR_DATABASE",
+    "proyecto": "YOUR_GCP_PROJECT_ID"
+}

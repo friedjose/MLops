@@ -1,6 +1,7 @@
 # Python cache
 __pycache__/
 *.py[cod]
+*$py.class
 
 # Virtual environments
 venv/
@@ -11,8 +12,13 @@ code_mlops-venv/
 .env
 *.env
 *.local
-*.json        
-credentials/ 
+
+# JSON files (except template)
+*.json
+!config.template.json
+
+# Credentials
+credentials/
 
 # Logs
 *.log
