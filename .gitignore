@@ -11,6 +11,8 @@ code_mlops-venv/
 .env
 *.env
 *.local
+*.json        
+credentials/ 
 
 # Logs
 *.log
