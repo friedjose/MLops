@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 echo "📦 Clonando repositorio..."
@@ -20,7 +19,6 @@ pipeline {
                 script {
                     echo "🐍 Configurando entorno virtual..."
                     
-                    // Verificar si el venv ya existe (para acelerar builds)
                     def venvExists = fileExists('venv/bin/activate')
                     
                     if (!venvExists) {
@@ -35,17 +33,13 @@ pipeline {
                         echo "✅ Reutilizando entorno virtual existente"
                     }
                     
-                    // Crear venv si no existe
                     sh '''
                         if [ ! -d "venv" ]; then
                             python3 -m venv venv
                         fi
                         
-                        # Activar y actualizar pip
                         . venv/bin/activate
                         pip install --upgrade pip --quiet
-                        
-                        # Instalar dependencias
                         echo "📚 Instalando dependencias de Python..."
                         pip install -r Mlops/requirements.txt --quiet
                     '''
@@ -72,68 +66,37 @@ pipeline {
 
     post {
         success {
-            echo "✅ Pipeline completado con éxito"
-            script {
-                try {
-                    emailext (
-                        subject: "✅ ÉXITO | Pipeline MLOps finalizado",
-                        body: """
-Hola equipo 👋,
+            emailext (
+                subject: "✅ Pipeline MLOps finalizado OK",
+                body: """
+El pipeline terminó correctamente ✅
 
-El pipeline MLOps terminó correctamente ✅
+Build: ${env.BUILD_NUMBER}
+Job: ${env.JOB_NAME}
+Duración: ${currentBuild.durationString}
 
-📌 Repositorio: ${env.GIT_URL}
-📌 Rama: ${env.GIT_BRANCH}
-📌 Job: ${env.JOB_NAME}
-📌 Build: ${env.BUILD_NUMBER}
-⏱ Duración: ${currentBuild.durationString}
-✅ Estado: SUCCESS
-
-Saludos,  
-Jenkins MLOps 🤖
+Saludos,
+Jenkins 🤖
 """,
-                        to: "josefervi50000@gmail.com"
-                    )
-                } catch (Exception e) {
-                    echo "⚠️ No se pudo enviar email (SMTP no configurado)"
-                }
-            }
+                to: "josefervi50000@gmail.com"
+            )
         }
         failure {
-            echo "❌ Falló el pipeline"
-            script {
-                try {
-                    emailext (
-                        subject: "❌ ERROR | Pipeline MLOps falló",
-                        body: """
-Hola equipo ⚠️,
+            emailext (
+                subject: "❌ Pipeline MLOps falló",
+                body: """
+El pipeline falló ❌
 
-El pipeline MLOps falló ❌
+Build: ${env.BUILD_NUMBER}
+Job: ${env.JOB_NAME}
+Error: ${currentBuild.currentResult}
 
-📌 Repositorio: ${env.GIT_URL}
-📌 Rama: ${env.GIT_BRANCH}
-📌 Job: ${env.JOB_NAME}
-📌 Build: ${env.BUILD_NUMBER}
-⏱ Duración: ${currentBuild.durationString}
-❗ Error: ${currentBuild.currentResult}
+Revisar logs: ${env.BUILD_URL}console
 
-Por favor revisar logs aquí:
-${env.BUILD_URL}console
-
-Saludos,  
-Jenkins MLOps 🤖
+-- Jenkins 🤖
 """,
-                        to: "josefervi50000@gmail.com"
-                    )
-                } catch (Exception e) {
-                    echo "⚠️ No se pudo enviar email (SMTP no configurado)"
-                }
-            }
-        }
-        cleanup {
-            echo "🧹 Limpiando workspace (opcional)..."
-            // Descomentar si quieres limpiar después de cada build
-            // cleanWs()
+                to: "josefervi50000@gmail.com"
+            )
         }
     }
 }
