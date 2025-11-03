@@ -36,3 +36,6 @@ credentials/
 # macOS / Windows system files
 .DS_Store
 Thumbs.db
+
+monitoring_log.csv
+*.log
