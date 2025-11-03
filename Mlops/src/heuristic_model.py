@@ -107,7 +107,7 @@ from google.cloud import bigquery
 project_id = load_project()
 table_id = f"{project_id}.proyecto_final_cdp.restaurantes_features"
 
-print(f"📥 Loading data from BigQuery: {table_id}")
+print(f" Loading data from BigQuery: {table_id}")
 
 client = bigquery.Client(project=project_id)
 query = f"""
@@ -116,19 +116,17 @@ FROM `{table_id}`
 """
 df = client.query(query).to_dataframe()
 
-print(f"✅ Dataset cargado: {df.shape}")
-print(f"📊 Columnas disponibles: {len(df.columns)}")
+print(f" Dataset cargado: {df.shape}")
+print(f" Columnas disponibles: {len(df.columns)}")
 
 # =====================================================
 # CONVERTIR TARGET A NUMÉRICO
 # =====================================================
-print(f"\n🔄 Valores originales de membresia_premium: {df['membresia_premium'].unique()}")
+print(f"\n Valores originales de membresia_premium: {df['membresia_premium'].unique()}")
 
-# Mapear 'Sí' -> 1, 'No' -> 0
-df['membresia_premium'] = df['membresia_premium'].map({'Sí': 1, 'No': 0})
 
-print(f"✅ Valores convertidos: {df['membresia_premium'].unique()}")
-print(f"🎯 Distribución de membresia_premium:")
+print(f" Valores convertidos: {df['membresia_premium'].unique()}")
+print(f" Distribución de membresia_premium:")
 print(df['membresia_premium'].value_counts())
 
 X = df.drop(columns=["membresia_premium"])
@@ -143,9 +141,9 @@ x_train, x_test, y_train, y_test = train_test_split(
     stratify=y
 )
 
-print(f"\n📦 Train set: {x_train.shape}")
-print(f"📦 Test set: {x_test.shape}")
-print(f"🎯 Distribución target en train:")
+print(f"\n Train set: {x_train.shape}")
+print(f" Test set: {x_test.shape}")
+print(f" Distribución target en train:")
 print(y_train.value_counts(normalize=True))
 
 
@@ -153,7 +151,7 @@ print(y_train.value_counts(normalize=True))
 # 3. Validación cruzada
 # =====================================================
 print("\n" + "="*60)
-print("🚀 ENTRENAMIENTO Y VALIDACIÓN CRUZADA")
+print(" ENTRENAMIENTO Y VALIDACIÓN CRUZADA")
 print("="*60)
 
 model = HeuristicModel()
@@ -256,7 +254,7 @@ print(f"True Positives: {tp}")
 # =====================================================
 # 7. Learning Curve
 # =====================================================
-print("\n⏳ Generando Learning Curve...")
+print("\n Generando Learning Curve...")
 train_sizes, train_scores_lc, test_scores_lc = learning_curve(
     pipe,
     x_train,
@@ -286,5 +284,5 @@ plt.tight_layout()
 plt.show()
 
 print("\n" + "="*60)
-print("✅ ENTRENAMIENTO COMPLETADO")
+print(" ENTRENAMIENTO COMPLETADO")
 print("="*60)
