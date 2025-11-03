@@ -67,13 +67,7 @@ pipeline {
     post {
         success {
             script {
-                def mensaje = """
-✅ Pipeline MLOps finalizado OK
-
-📌 Build: ${env.BUILD_NUMBER}
-📌 Job: ${env.JOB_NAME}
-⏱ Duración: ${currentBuild.durationString}
-"""
+                def mensaje = "✅ Pipeline MLOps finalizado OK\\nBuild: ${env.BUILD_NUMBER}\\nJob: ${env.JOB_NAME}\\nDuración: ${currentBuild.durationString}"
                 httpRequest(
                     httpMode: 'POST',
                     url: 'https://discord.com/api/webhooks/1435014869467533322/752Mi4kROZEL5483Os85_2GEAGktQ7Clzi-ywCcRw5O3JiVcvYfBKH2H8Lz4BVF0ZCye',
@@ -84,15 +78,7 @@ pipeline {
         }
         failure {
             script {
-                def mensaje = """
-❌ Pipeline MLOps falló
-
-📌 Build: ${env.BUILD_NUMBER}
-📌 Job: ${env.JOB_NAME}
-❗ Error: ${currentBuild.currentResult}
-
-🔍 Revisar logs: ${env.BUILD_URL}console
-"""
+                def mensaje = "❌ Pipeline MLOps falló\\nBuild: ${env.BUILD_NUMBER}\\nJob: ${env.JOB_NAME}\\nError: ${currentBuild.currentResult}\\nRevisar logs: ${env.BUILD_URL}console"
                 httpRequest(
                     httpMode: 'POST',
                     url: 'https://discord.com/api/webhooks/1435014869467533322/752Mi4kROZEL5483Os85_2GEAGktQ7Clzi-ywCcRw5O3JiVcvYfBKH2H8Lz4BVF0ZCye',
