@@ -67,7 +67,12 @@ pipeline {
     post {
         success {
             script {
-                def mensaje = "✅ Pipeline MLOps finalizado OK\\nBuild: ${env.BUILD_NUMBER}\\nJob: ${env.JOB_NAME}\\nDuración: ${currentBuild.durationString}"
+                def mensaje = "**✅ Pipeline MLOps finalizado exitosamente**\\n\\n" +
+                              "**Build:** ${env.BUILD_NUMBER}\\n" +
+                              "**Job:** ${env.JOB_NAME}\\n" +
+                              "**Duración:** ${currentBuild.durationString}\\n\\n" +
+                              "Todos los pasos se ejecutaron correctamente. El entorno fue configurado, las dependencias instaladas y las validaciones superadas.\\n\\n" +
+                              "_Este mensaje fue generado automáticamente por Jenkins._"
                 httpRequest(
                     httpMode: 'POST',
                     url: 'https://discord.com/api/webhooks/1435014869467533322/752Mi4kROZEL5483Os85_2GEAGktQ7Clzi-ywCcRw5O3JiVcvYfBKH2H8Lz4BVF0ZCye',
@@ -78,7 +83,13 @@ pipeline {
         }
         failure {
             script {
-                def mensaje = "❌ Pipeline MLOps falló\\nBuild: ${env.BUILD_NUMBER}\\nJob: ${env.JOB_NAME}\\nError: ${currentBuild.currentResult}\\nRevisar logs: ${env.BUILD_URL}console"
+                def mensaje = "**❌ Pipeline MLOps falló durante la ejecución**\\n\\n" +
+                              "**Build:** ${env.BUILD_NUMBER}\\n" +
+                              "**Job:** ${env.JOB_NAME}\\n" +
+                              "**Estado:** ${currentBuild.currentResult}\\n" +
+                              "**Logs:** ${env.BUILD_URL}console\\n\\n" +
+                              "Se recomienda revisar los registros para identificar el origen del error.\\n\\n" +
+                              "_Este mensaje fue generado automáticamente por Jenkins._"
                 httpRequest(
                     httpMode: 'POST',
                     url: 'https://discord.com/api/webhooks/1435014869467533322/752Mi4kROZEL5483Os85_2GEAGktQ7Clzi-ywCcRw5O3JiVcvYfBKH2H8Lz4BVF0ZCye',
