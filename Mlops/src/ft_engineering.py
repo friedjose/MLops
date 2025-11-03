@@ -23,14 +23,14 @@ def load_project():
 # Save DataFrame to BigQuery
 # =====================================
 def save_to_bigquery(df, table_id):
-    project_id = load_project()  
+    project_id = load_project()  # read from config
     client = bigquery.Client(project=project_id)
 
     job_config = bigquery.LoadJobConfig(write_disposition="WRITE_TRUNCATE")
     job = client.load_table_from_dataframe(df, table_id, job_config=job_config)
     job.result()
 
-    print(f"✅ Procesado cargado en BigQuery: {table_id}")
+    print(f"Processed data uploaded to BigQuery: {table_id}")
 
 
 # =====================================
@@ -38,9 +38,6 @@ def save_to_bigquery(df, table_id):
 # =====================================
 def clean_data(df):
     df = df.copy()
-
-    # ---- Convert target to binary ----
-    df["membresia_premium"] = df["membresia_premium"].map({"No": 0, "Sí": 1}).astype(int)
 
     # ---- Fix Edad ----
     edad_median = df['edad'].median()
@@ -65,20 +62,13 @@ def clean_data(df):
 # =====================================
 # 2. Build Pipeline
 # =====================================
-def build_pipeline(categorical_binary, categorical_multi, numeric_features):
-
+def build_pipeline(categorical_features, numeric_features):
     preprocessor = ColumnTransformer(
         transformers=[
-            # solo dicotómicas -> drop first
-            ("cat_bin", OneHotEncoder(drop="first", handle_unknown="ignore"), categorical_binary),
-            
-            # multiclase -> NO drop first
-            ("cat_multi", OneHotEncoder(drop=None, handle_unknown="ignore"), categorical_multi),
-            
+            ("cat", OneHotEncoder(drop="first", handle_unknown="ignore"), categorical_features),
             ("num", MinMaxScaler(), numeric_features)
         ]
     )
-    
     return Pipeline([("preprocessor", preprocessor)])
 
 
@@ -101,30 +91,20 @@ def main(df):
     X = df.drop(columns=[target])
     y = df[target]
 
-    # ✅ Dicótomicas
-    categorical_binary = ["genero", "ocio", "consume_licor"]
-
-    # ✅ Multiclase
-    categorical_multi = [
-        "ciudad_residencia",
-        "estrato_socioeconomico",
-        "preferencias_alimenticias",
-        "tipo_de_pago_mas_usado"
+    categorical = [
+        "genero", "ciudad_residencia", "estrato_socioeconomico",
+        "ocio", "consume_licor", "preferencias_alimenticias", "tipo_de_pago_mas_usado"
     ]
-    
-    # ✅ Numéricas
     numeric = ["edad", "frecuencia_visita", "promedio_gasto_comida", "ingresos_mensuales"]
 
-    pipeline = build_pipeline(categorical_binary, categorical_multi, numeric)
+    pipeline = build_pipeline(categorical, numeric)
 
     X_trans = pipeline.fit_transform(X)
     feature_names = pipeline.named_steps["preprocessor"].get_feature_names_out()
-
     X_df = pd.DataFrame(
         X_trans.toarray() if hasattr(X_trans, "toarray") else X_trans,
         columns=feature_names
     )
-
     df_processed = pd.concat([X_df, y.reset_index(drop=True)], axis=1)
 
     project_id = load_project()
@@ -133,11 +113,12 @@ def main(df):
 
     X_train, X_test, y_train, y_test = split_data(df_processed)
 
-    print("✅ Feature Engineering Listo")
-    print("📦 Train:", X_train.shape, " | Test:", X_test.shape)
+    print("Feature Engineering Completed")
+    print("Train:", X_train.shape, " | Test:", X_test.shape)
 
 
 if __name__ == "__main__":
     from cargar_datos import load_data
     df = load_data()
     main(df)
+

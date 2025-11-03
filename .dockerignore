@@ -1,0 +1,7 @@
+code_mlops-venv/
+*.csv
+*.parquet
+__pycache__/
+*.ipynb_checkpoints
+.env
+.git

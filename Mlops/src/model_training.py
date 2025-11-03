@@ -38,14 +38,25 @@ def load_from_bigquery():
 def evaluate_model(model, X_train, X_test, y_train, y_test):
     model.fit(X_train, y_train)
 
+    # ✅ Train predictions
+    y_pred_train = model.predict(X_train)
+
+    # ✅ Test predictions
     y_pred_test = model.predict(X_test)
 
-    return {
-        "accuracy": accuracy_score(y_test, y_pred_test),
-        "f1": f1_score(y_test, y_pred_test),
-        "recall": recall_score(y_test, y_pred_test),
-        "precision": precision_score(y_test, y_pred_test)
-    }, model
+    metrics = {
+        "train_accuracy": accuracy_score(y_train, y_pred_train),
+        "train_f1": f1_score(y_train, y_pred_train),
+        "train_recall": recall_score(y_train, y_pred_train),
+        "train_precision": precision_score(y_train, y_pred_train),
+
+        "test_accuracy": accuracy_score(y_test, y_pred_test),
+        "test_f1": f1_score(y_test, y_pred_test),
+        "test_recall": recall_score(y_test, y_pred_test),
+        "test_precision": precision_score(y_test, y_pred_test)
+    }
+
+    return metrics, model
 
 # ============================
 # 3. Main 
@@ -64,7 +75,6 @@ if __name__ == "__main__":
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    # Ensemble models
     models = {
         "RandomForest": RandomForestClassifier(n_estimators=300, random_state=42),
         "Bagging": BaggingClassifier(n_estimators=200, random_state=42),
@@ -88,25 +98,23 @@ if __name__ == "__main__":
         results[name] = metrics
         trained[name] = trained_model
 
-    # Summary table
     df_results = pd.DataFrame(results).T
     print("\n📊 Resultados:")
     print(df_results)
 
-    # Plot
-    df_results.plot(kind="bar", figsize=(10,6))
-    plt.title("Comparación Modelos Ensamble")
+    # Plot test metrics only for visualization
+    df_results[[c for c in df_results.columns if "test" in c]].plot(kind="bar", figsize=(10,6))
+    plt.title("Comparación Modelos Ensamble (Test Metrics)")
     plt.ylabel("Score")
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()
 
-    # Best model (top f1)
-    best_model_name = df_results.sort_values(by="f1", ascending=False).index[0]
+    best_model_name = df_results.sort_values(by="test_f1", ascending=False).index[0]
     best_model = trained[best_model_name]
 
     print(f"\n🏆 Mejor modelo: {best_model_name}")
 
-    # Save
     joblib.dump(best_model, "best_model.pkl")
     print("✅ Modelo guardado como best_model.pkl")
+
