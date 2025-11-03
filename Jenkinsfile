@@ -66,37 +66,41 @@ pipeline {
 
     post {
         success {
-            emailext (
-                subject: "✅ Pipeline MLOps finalizado OK",
-                body: """
-El pipeline terminó correctamente ✅
+            script {
+                def mensaje = """
+✅ Pipeline MLOps finalizado OK
 
-Build: ${env.BUILD_NUMBER}
-Job: ${env.JOB_NAME}
-Duración: ${currentBuild.durationString}
-
-Saludos,
-Jenkins 🤖
-""",
-                to: "josefervi50000@gmail.com"
-            )
+📌 Build: ${env.BUILD_NUMBER}
+📌 Job: ${env.JOB_NAME}
+⏱ Duración: ${currentBuild.durationString}
+"""
+                httpRequest(
+                    httpMode: 'POST',
+                    url: 'https://discord.com/api/webhooks/1435014869467533322/752Mi4kROZEL5483Os85_2GEAGktQ7Clzi-ywCcRw5O3JiVcvYfBKH2H8Lz4BVF0ZCye',
+                    contentType: 'APPLICATION_JSON',
+                    requestBody: """{ "content": "${mensaje}" }"""
+                )
+            }
         }
         failure {
-            emailext (
-                subject: "❌ Pipeline MLOps falló",
-                body: """
-El pipeline falló ❌
+            script {
+                def mensaje = """
+❌ Pipeline MLOps falló
 
-Build: ${env.BUILD_NUMBER}
-Job: ${env.JOB_NAME}
-Error: ${currentBuild.currentResult}
+📌 Build: ${env.BUILD_NUMBER}
+📌 Job: ${env.JOB_NAME}
+❗ Error: ${currentBuild.currentResult}
 
-Revisar logs: ${env.BUILD_URL}console
-
--- Jenkins 🤖
-""",
-                to: "josefervi50000@gmail.com"
-            )
+🔍 Revisar logs: ${env.BUILD_URL}console
+"""
+                httpRequest(
+                    httpMode: 'POST',
+                    url: 'https://discord.com/api/webhooks/1435014869467533322/752Mi4kROZEL5483Os85_2GEAGktQ7Clzi-ywCcRw5O3JiVcvYfBKH2H8Lz4BVF0ZCye',
+                    contentType: 'APPLICATION_JSON',
+                    requestBody: """{ "content": "${mensaje}" }"""
+                )
+            }
         }
     }
 }
+
