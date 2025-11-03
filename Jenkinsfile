@@ -68,14 +68,16 @@ pipeline {
                 '''
             }
         }
-
+    }
 
     post {
         success {
             echo "✅ Pipeline completado con éxito"
-            emailext (
-                subject: "✅ ÉXITO | Pipeline MLOps finalizado",
-                body: """
+            script {
+                try {
+                    emailext (
+                        subject: "✅ ÉXITO | Pipeline MLOps finalizado",
+                        body: """
 Hola equipo 👋,
 
 El pipeline MLOps terminó correctamente ✅
@@ -90,14 +92,20 @@ El pipeline MLOps terminó correctamente ✅
 Saludos,  
 Jenkins MLOps 🤖
 """,
-                to: "tu_correo@ejemplo.com"
-            )
+                        to: "josefervi50000@gmail.com"
+                    )
+                } catch (Exception e) {
+                    echo "⚠️ No se pudo enviar email (SMTP no configurado)"
+                }
+            }
         }
         failure {
             echo "❌ Falló el pipeline"
-            emailext (
-                subject: "❌ ERROR | Pipeline MLOps falló",
-                body: """
+            script {
+                try {
+                    emailext (
+                        subject: "❌ ERROR | Pipeline MLOps falló",
+                        body: """
 Hola equipo ⚠️,
 
 El pipeline MLOps falló ❌
@@ -115,8 +123,12 @@ ${env.BUILD_URL}console
 Saludos,  
 Jenkins MLOps 🤖
 """,
-                to: "josefervi50000@gmail.com"
-            )
+                        to: "josefervi50000@gmail.com"
+                    )
+                } catch (Exception e) {
+                    echo "⚠️ No se pudo enviar email (SMTP no configurado)"
+                }
+            }
         }
         cleanup {
             echo "🧹 Limpiando workspace (opcional)..."
