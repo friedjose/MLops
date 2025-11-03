@@ -14,7 +14,6 @@ code_mlops-venv/
 *.local
 
 # JSON files (except template)
-*.json
 !config.template.json
 
 # Credentials

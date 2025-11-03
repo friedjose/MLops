@@ -17,4 +17,3 @@ uvicorn
 streamlit
 evidently
 google-cloud-bigquery
-db-dtypes
