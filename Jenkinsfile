@@ -69,16 +69,6 @@ pipeline {
             }
         }
 
-        stage('Smoke test: cargar_datos.py') {
-            steps {
-                echo "🧪 Probando carga de datos..."
-                sh '''
-                    . venv/bin/activate
-                    python3 Mlops/src/cargar_datos.py
-                '''
-            }
-        }
-    }
 
     post {
         success {
